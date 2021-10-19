@@ -7,7 +7,7 @@ import numpy as np
 import cv2
 from PIL import Image
 from scipy.io import loadmat,savemat
-from DiscoFaceGAN.renderer import face_decoder
+# from DiscoFaceGAN.renderer import face_decoder
 from DiscoFaceGAN.training.networks_recon import R_Net
 from DiscoFaceGAN.training import misc
 from DiscoFaceGAN.preprocess.preprocess_utils import *
