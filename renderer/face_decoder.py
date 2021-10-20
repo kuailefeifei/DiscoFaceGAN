@@ -4,7 +4,7 @@
 import tensorflow as tf 
 import math as m
 import numpy as np
-from renderer import mesh_renderer
+# from renderer import mesh_renderer
 from scipy.io import loadmat
 
 # Reconstruct 3D face based on output coefficients and facemodel
