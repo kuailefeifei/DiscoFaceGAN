@@ -179,7 +179,7 @@ def main():
 
         # Pick latent vector.
         # latents = tf.placeholder(tf.float32, name='latents', shape=[1, 128 + 32 + 16 + 3])
-        INPUTcoeff = tf.placeholder(tf.float32, name='coeff', shape=[1, 254])
+        INPUTcoeff = tf.placeholder(tf.float32, name='INPUTcoeff', shape=[1, 254])
         noise = tf.placeholder(tf.float32, name='noise', shape=[1, 32])
         # INPUTcoeff = z_to_lambda_mapping(latents)
         INPUTcoeff_w_noise = tf.concat([INPUTcoeff, noise], axis=1)
@@ -193,7 +193,7 @@ def main():
 
     coef = np.random.normal(size=[1, 254])
     noise_ = np.random.normal(size=[1, 32])
-    fake = tflib.run(fake_images_out, {coeff: coef, noise: noise_})
+    fake = tflib.run(fake_images_out, {INPUTcoeff: coef, noise: noise_})
     PIL.Image.fromarray(fake[0].astype(np.uint8), 'RGB').save(os.path.join(save_path, '%03d_%02d.png' % (0, 0)))
 
 
