@@ -103,7 +103,7 @@ def get_model_and_average_w_id(model_name):
     average_w_name = model_name.replace('.pkl', '-average_w_id.txt')
     if not os.path.isfile(average_w_name):
         print('Calculating average w id...\n')
-        INPUTcoeff = tf.placeholder(tf.float32, name='coeff', shape=[1, 128 + 32 + 16 + 3])
+        INPUTcoeff = tf.placeholder(tf.float32, name='coeff', shape=[1, 254])
         noise = tf.placeholder(tf.float32, name='noise', shape=[1, 32])
         # INPUTcoeff = z_to_lambda_mapping(latents)
         INPUTcoeff_id = INPUTcoeff[:, :160]
