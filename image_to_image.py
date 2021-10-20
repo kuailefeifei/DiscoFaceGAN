@@ -190,7 +190,7 @@ def main():
             coef_list = []
             image_name_list = []
             image_aligned_list = []
-            for file in os.listdir(args.image_path):
+            for file in sorted(os.listdir(args.image_path)):
                 if file.endswith('.jpg'):
 
                     # load images and landmarks
@@ -260,10 +260,11 @@ def main():
 
             np.random.seed(1)
             n = len(coef_list)
+            coef_ref = coef_list[92]
+            noise_ = np.random.normal(size=[1, 32])
             for image_aligned, coef, file in zip(image_aligned_list, coef_list, image_name_list):
                 # lats1 = np.random.normal(size=[1,128+32+16+3])
-                noise_ = np.random.normal(size=[1,32])
-                coef_short = coef[:, :254]
+                coef_short = np.concatenate((coef_ref[:, :160], coef[:, 160:254]), axis=1)
 
                 fake = tflib.run(fake_images_out, {INPUTcoeff:coef_short,noise:noise_})
                 PIL.Image.fromarray(fake[0].astype(np.uint8), 'RGB').save(os.path.join(save_path, file))
