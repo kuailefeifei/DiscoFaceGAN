@@ -190,7 +190,7 @@ def main():
 
             # load images and landmarks
             image = Image.open(image_path)
-            lm = np.loadtxt(os.path.join(lm_path, file.replace('png', 'txt')))
+            lm = np.loadtxt(os.path.join(lm_path, file.replace('jpg', 'txt')))
             lm = np.reshape(lm, [5, 2])
 
             # align image for 3d face reconstruction
@@ -254,7 +254,7 @@ def main():
     noise_ = np.random.normal(size=[1,32])
 
     fake = tflib.run(fake_images_out, {coeff:coef[:, :, :254],noise:noise_})
-    PIL.Image.fromarray(fake[0].astype(np.uint8), 'RGB').save(os.path.join(save_path,'%03d_%02d.png'%(0,0)))
+    PIL.Image.fromarray(fake[0].astype(np.uint8), 'RGB').save(os.path.join(save_path,'%03d_%02d.jpg'%(0,0)))
 
 
 if __name__ == '__main__':
