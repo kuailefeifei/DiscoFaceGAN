@@ -8,7 +8,7 @@ from mlcandy.media.video_reader import VideoReader
 from mlcandy.media.video_writer import VideoWriter
 
 
-def concat_video_1(input_path_grid, output_path, add_tag=True):
+def concat_video(input_path_grid, output_path, add_tag=True):
     assert input_path_grid[0][0]
     video_grid = []
     for input_paths in input_path_grid:
@@ -72,7 +72,7 @@ def main():
     video_1 = os.path.join(main_path, name_1)
     video_2 = os.path.join(main_path, name_2)
     input_path_grid = [[video_1, video_2]]
-    concat_video_1(input_path_grid, output_path)
+    concat_video(input_path_grid, output_path)
 
 
 if __name__ == '__main__':
