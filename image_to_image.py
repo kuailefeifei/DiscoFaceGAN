@@ -217,7 +217,7 @@ def main():
             if not os.path.exists(save_path):
                 os.makedirs(save_path)
             resume_pkl = ''
-        
+
             tflib.init_tf()
 
             with tf.device('/gpu:0'):
@@ -252,8 +252,10 @@ def main():
 
             # lats1 = np.random.normal(size=[1,128+32+16+3])
             noise_ = np.random.normal(size=[1,32])
+            print('the shape of coef is ', coef.shape)
+            coef_short = coef[:, :254]
 
-            fake = tflib.run(fake_images_out, {coeff:coef[:, :254],noise:noise_})
+            fake = tflib.run(fake_images_out, {coeff:coef_short,noise:noise_})
             PIL.Image.fromarray(fake[0].astype(np.uint8), 'RGB').save(os.path.join(save_path,'%03d_%02d.jpg'%(0,0)))
 
 
