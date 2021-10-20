@@ -141,7 +141,7 @@ def parse_args():
     desc = "Data Preprocess of DisentangledFaceGAN"
     parser = argparse.ArgumentParser(description=desc)
 
-    parser.add_argument('--image_path', type=str, default='/root/lib/Deep3DFaceReconstruction/input/000002.jpg', help='Training image path.')
+    parser.add_argument('--image_path', type=str, default='/root/lib/Deep3DFaceReconstruction/input/', help='Training image path.')
     parser.add_argument('--lm_path', type=str, default='/root/lib/Deep3DFaceReconstruction/input/', help='Deteced landmark path.')
     parser.add_argument('--model', type=str, default=None, help='pkl file name of the generator. If None, use the default pre-trained model.')
 
