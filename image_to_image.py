@@ -187,79 +187,79 @@ def main():
             saver = tf.train.Saver(var_list=var_list, max_to_keep=100)
             saver.restore(sess, R_net_weights)
 
-            image_path = args.image_path
-            file = image_path.split('/')[-1]
+            for file in os.listdir(args.image_path):
+                if file.endswith('.jpg'):
 
-            # load images and landmarks
-            image = Image.open(image_path)
-            lm = np.loadtxt(os.path.join(lm_path, file.replace('jpg', 'txt')))
-            lm = np.reshape(lm, [5, 2])
+                    # load images and landmarks
+                    image = Image.open(os.path.join(args.image_path, file))
+                    lm = np.loadtxt(os.path.join(args.lm_path, file.replace('jpg', 'txt')))
+                    lm = np.reshape(lm, [5, 2])
 
-            # align image for 3d face reconstruction
-            align_img, _, _ = Preprocess(image, lm, lm3D)  # 512*512*3 RGB image
-            align_img = np.array(align_img)
+                    # align image for 3d face reconstruction
+                    align_img, _, _ = Preprocess(image, lm, lm3D)  # 512*512*3 RGB image
+                    align_img = np.array(align_img)
 
-            align_img_ = align_img[:, :, ::-1]  # RGBtoBGR
-            align_img_ = cv2.resize(align_img_,
-                                    (224, 224))  # input image to reconstruction network should be 224*224
-            align_img_ = np.expand_dims(align_img_, 0)
-            coef = sess.run(coeff, feed_dict={images: align_img_})
+                    align_img_ = align_img[:, :, ::-1]  # RGBtoBGR
+                    align_img_ = cv2.resize(align_img_,
+                                            (224, 224))  # input image to reconstruction network should be 224*224
+                    align_img_ = np.expand_dims(align_img_, 0)
+                    coef = sess.run(coeff, feed_dict={images: align_img_})
 
-            # align image for GAN training
-            # eliminate translation and rescale face size to proper scale
-            rescale_img = crop_n_rescale_face_region(align_img, coef)  # 256*256*3 RGB image
-            # coef = np.squeeze(coef, 0)
+                    # align image for GAN training
+                    # eliminate translation and rescale face size to proper scale
+                    rescale_img = crop_n_rescale_face_region(align_img, coef)  # 256*256*3 RGB image
+                    # coef = np.squeeze(coef, 0)
 
-            # save aligned images and extracted coefficients
-            # cv2.imwrite(os.path.join(save_path, 'img', file), rescale_img[:, :, ::-1])
-            # savemat(os.path.join(save_path, 'coeff', file.replace('.png', '.mat')), {'coeff': coef})
+                    # save aligned images and extracted coefficients
+                    # cv2.imwrite(os.path.join(save_path, 'img', file), rescale_img[:, :, ::-1])
+                    # savemat(os.path.join(save_path, 'coeff', file.replace('.png', '.mat')), {'coeff': coef})
 
-            # save path for generated images
-            save_path = 'test_images'
-            if not os.path.exists(save_path):
-                os.makedirs(save_path)
-            resume_pkl = ''
+                    # save path for generated images
+                    save_path = 'test_images'
+                    if not os.path.exists(save_path):
+                        os.makedirs(save_path)
+                    resume_pkl = ''
 
-            tflib.init_tf()
+                    tflib.init_tf()
 
-            with tf.device('/gpu:0'):
+                    with tf.device('/gpu:0'):
 
-                # Use default pre-trained model
-                if args.model is None:
-                    url_pretrained_model_ffhq = 'https://drive.google.com/uc?id=1nT_cf610q5mxD_jACvV43w4SYBxsPUBq'
-                    Gs = load_Gs(url_pretrained_model_ffhq)
-                    average_w_id = None
+                        # Use default pre-trained model
+                        if args.model is None:
+                            url_pretrained_model_ffhq = 'https://drive.google.com/uc?id=1nT_cf610q5mxD_jACvV43w4SYBxsPUBq'
+                            Gs = load_Gs(url_pretrained_model_ffhq)
+                            average_w_id = None
 
-                else:
-                    Gs,average_w_id = get_model_and_average_w_id(args.model)
-                # Gs = Long-term average of the generator. Yields higher-quality results than the instantaneous snapshot.
-                # average_w_id = average w space latent vector with zero expression, lighting, and pose.
+                        else:
+                            Gs,average_w_id = get_model_and_average_w_id(args.model)
+                        # Gs = Long-term average of the generator. Yields higher-quality results than the instantaneous snapshot.
+                        # average_w_id = average w space latent vector with zero expression, lighting, and pose.
 
-                # Print network details.
-                Gs.print_layers()
+                        # Print network details.
+                        Gs.print_layers()
 
-                # Pick latent vector.
-                # latents = tf.placeholder(tf.float32, name='latents', shape=[1,128+32+16+3])
-                noise = tf.placeholder(tf.float32, name='noise', shape=[1,32])
-                # INPUTcoeff = z_to_lambda_mapping(latents)
-                INPUTcoeff = tf.placeholder(tf.float32, name='INPUTcoeff', shape=[1,254])
-                INPUTcoeff_w_noise = tf.concat([INPUTcoeff,noise],axis = 1)
+                        # Pick latent vector.
+                        # latents = tf.placeholder(tf.float32, name='latents', shape=[1,128+32+16+3])
+                        noise = tf.placeholder(tf.float32, name='noise', shape=[1,32])
+                        # INPUTcoeff = z_to_lambda_mapping(latents)
+                        INPUTcoeff = tf.placeholder(tf.float32, name='INPUTcoeff', shape=[1,254])
+                        INPUTcoeff_w_noise = tf.concat([INPUTcoeff,noise],axis = 1)
 
-                # Generate images
-                fake_images_out = truncate_generation(Gs,INPUTcoeff_w_noise,dlatent_average_id=average_w_id)
+                        # Generate images
+                        fake_images_out = truncate_generation(Gs,INPUTcoeff_w_noise,dlatent_average_id=average_w_id)
 
-            # restore_weights_and_initialize()
+                    # restore_weights_and_initialize()
 
-            np.random.seed(1)
+                    np.random.seed(1)
 
-            # lats1 = np.random.normal(size=[1,128+32+16+3])
-            noise_ = np.random.normal(size=[1,32])
-            print('the shape of coef is ', coef.shape)
-            coef_short = coef[:, :254]
-            print('the shape of coef is ', coef_short.shape)
+                    # lats1 = np.random.normal(size=[1,128+32+16+3])
+                    noise_ = np.random.normal(size=[1,32])
+                    print('the shape of coef is ', coef.shape)
+                    coef_short = coef[:, :254]
+                    print('the shape of coef is ', coef_short.shape)
 
-            fake = tflib.run(fake_images_out, {INPUTcoeff:coef_short,noise:noise_})
-            PIL.Image.fromarray(fake[0].astype(np.uint8), 'RGB').save(os.path.join(save_path,'%03d_%02d.jpg'%(0,0)))
+                    fake = tflib.run(fake_images_out, {INPUTcoeff:coef_short,noise:noise_})
+                    PIL.Image.fromarray(fake[0].astype(np.uint8), 'RGB').save(os.path.join(save_path, file))
 
 
 if __name__ == '__main__':
