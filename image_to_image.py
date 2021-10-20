@@ -110,9 +110,10 @@ def get_model_and_average_w_id(model_name):
     average_w_name = model_name.replace('.pkl', '-average_w_id.txt')
     if not os.path.isfile(average_w_name):
         print('Calculating average w id...\n')
-        latents = tf.placeholder(tf.float32, name='latents', shape=[1, 128 + 32 + 16 + 3])
+        # latents = tf.placeholder(tf.float32, name='latents', shape=[1, 128 + 32 + 16 + 3])
+        INPUTcoeff = tf.placeholder(tf.float32, name='INPUTcoeff', shape=[1, 254])
         noise = tf.placeholder(tf.float32, name='noise', shape=[1, 32])
-        INPUTcoeff = z_to_lambda_mapping(latents)
+        # INPUTcoeff = z_to_lambda_mapping(latents)
         INPUTcoeff_id = INPUTcoeff[:, :160]
         INPUTcoeff_w_noise = tf.concat([INPUTcoeff_id, tf.zeros([1, 64 + 27 + 3]), noise], axis=1)
         dlatent_out = Gs.components.mapping.get_output_for(INPUTcoeff_w_noise, None, is_training=False,
@@ -240,7 +241,7 @@ def main():
                 # latents = tf.placeholder(tf.float32, name='latents', shape=[1,128+32+16+3])
                 noise = tf.placeholder(tf.float32, name='noise', shape=[1,32])
                 # INPUTcoeff = z_to_lambda_mapping(latents)
-                INPUTcoeff = tf.placeholder(tf.float32, name='coeff', shape=[1,254])
+                INPUTcoeff = tf.placeholder(tf.float32, name='INPUTcoeff', shape=[1,254])
                 INPUTcoeff_w_noise = tf.concat([INPUTcoeff,noise],axis = 1)
 
                 # Generate images
@@ -254,8 +255,9 @@ def main():
             noise_ = np.random.normal(size=[1,32])
             print('the shape of coef is ', coef.shape)
             coef_short = coef[:, :254]
+            print('the shape of coef is ', coef_short.shape)
 
-            fake = tflib.run(fake_images_out, {coeff:coef_short,noise:noise_})
+            fake = tflib.run(fake_images_out, {INPUTcoeff:coef_short,noise:noise_})
             PIL.Image.fromarray(fake[0].astype(np.uint8), 'RGB').save(os.path.join(save_path,'%03d_%02d.jpg'%(0,0)))
 
 
