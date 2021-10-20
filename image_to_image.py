@@ -189,6 +189,7 @@ def main():
 
             coef_list = []
             image_name_list = []
+            image_aligned_list = []
             for file in os.listdir(args.image_path):
                 if file.endswith('.jpg'):
 
@@ -213,6 +214,7 @@ def main():
                     # coef = np.squeeze(coef, 0)
                     coef_list.append(coef)
                     image_name_list.append(file)
+                    image_aligned_list.append(rescale_img)
                     # save aligned images and extracted coefficients
                     # cv2.imwrite(os.path.join(save_path, 'img', file), rescale_img[:, :, ::-1])
                     # savemat(os.path.join(save_path, 'coeff', file.replace('.png', '.mat')), {'coeff': coef})
@@ -221,6 +223,9 @@ def main():
             save_path = 'test_images'
             if not os.path.exists(save_path):
                 os.makedirs(save_path)
+            aligned_save_path = 'images_aligned'
+            if not os.path.exists(aligned_save_path):
+                os.makedirs(aligned_save_path)
             resume_pkl = ''
 
             tflib.init_tf()
@@ -255,7 +260,7 @@ def main():
 
             np.random.seed(1)
             n = len(coef_list)
-            for coef, file in zip(coef_list, image_name_list):
+            for image_aligned, coef, file in zip(image_aligned_list, coef_list, image_name_list):
                 # lats1 = np.random.normal(size=[1,128+32+16+3])
                 noise_ = np.random.normal(size=[1,32])
                 print('the shape of coef is ', coef.shape)
@@ -264,6 +269,7 @@ def main():
 
                 fake = tflib.run(fake_images_out, {INPUTcoeff:coef_short,noise:noise_})
                 PIL.Image.fromarray(fake[0].astype(np.uint8), 'RGB').save(os.path.join(save_path, file))
+                PIL.Image.fromarray(image_aligned.astype(np.uint8), 'RGB').save(os.path.join(aligned_save_path, file))
 
 
 if __name__ == '__main__':
