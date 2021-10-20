@@ -6,6 +6,7 @@ import tensorflow as tf
 import numpy as np
 import cv2
 from PIL import Image
+import PIL.Image
 from scipy.io import loadmat,savemat
 from DiscoFaceGAN.renderer import face_decoder
 from DiscoFaceGAN.training.networks_recon import R_Net
