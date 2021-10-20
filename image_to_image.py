@@ -141,8 +141,8 @@ def parse_args():
     desc = "Data Preprocess of DisentangledFaceGAN"
     parser = argparse.ArgumentParser(description=desc)
 
-    parser.add_argument('--image_path', type=str, default='/root/lib/Deep3DFaceReconstruction/input/', help='Training image path.')
-    parser.add_argument('--lm_path', type=str, default='/root/lib/Deep3DFaceReconstruction/input/', help='Deteced landmark path.')
+    parser.add_argument('--image_path', type=str, default='/root/lib/DiscoFaceGAN/disco_input', help='Training image path.')
+    parser.add_argument('--lm_path', type=str, default='/root/lib/DiscoFaceGAN/disco_input', help='Deteced landmark path.')
     parser.add_argument('--model', type=str, default=None, help='pkl file name of the generator. If None, use the default pre-trained model.')
 
     return parser.parse_args()
@@ -220,10 +220,10 @@ def main():
                     # savemat(os.path.join(save_path, 'coeff', file.replace('.png', '.mat')), {'coeff': coef})
 
             # save path for generated images
-            save_path = 'test_images'
+            save_path = 'digit_man/render_images'
             if not os.path.exists(save_path):
                 os.makedirs(save_path)
-            aligned_save_path = 'images_aligned'
+            aligned_save_path = 'digit_man/images_aligned'
             if not os.path.exists(aligned_save_path):
                 os.makedirs(aligned_save_path)
             resume_pkl = ''
@@ -263,9 +263,7 @@ def main():
             for image_aligned, coef, file in zip(image_aligned_list, coef_list, image_name_list):
                 # lats1 = np.random.normal(size=[1,128+32+16+3])
                 noise_ = np.random.normal(size=[1,32])
-                print('the shape of coef is ', coef.shape)
                 coef_short = coef[:, :254]
-                print('the shape of coef is ', coef_short.shape)
 
                 fake = tflib.run(fake_images_out, {INPUTcoeff:coef_short,noise:noise_})
                 PIL.Image.fromarray(fake[0].astype(np.uint8), 'RGB').save(os.path.join(save_path, file))
