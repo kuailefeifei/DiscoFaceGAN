@@ -187,7 +187,7 @@ def main():
         # Generate images
         fake_images_out = truncate_generation(Gs, INPUTcoeff_w_noise, dlatent_average_id=average_w_id)
 
-    restore_weights_and_initialize()
+    # restore_weights_and_initialize()
 
     np.random.seed(1)
 
@@ -197,7 +197,7 @@ def main():
     PIL.Image.fromarray(fake[0].astype(np.uint8), 'RGB').save(os.path.join(save_path, '%03d_%02d.png' % (0, 0)))
 
 
-    
+
     # for i in range(args.subject):
     #     print(i)
     #     lats1 = np.random.normal(size=[1, 128 + 32 + 16 + 3])
