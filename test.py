@@ -103,9 +103,9 @@ def get_model_and_average_w_id(model_name):
     average_w_name = model_name.replace('.pkl', '-average_w_id.txt')
     if not os.path.isfile(average_w_name):
         print('Calculating average w id...\n')
-        latents = tf.placeholder(tf.float32, name='latents', shape=[1, 128 + 32 + 16 + 3])
+        INPUTcoeff = tf.placeholder(tf.float32, name='coeff', shape=[1, 128 + 32 + 16 + 3])
         noise = tf.placeholder(tf.float32, name='noise', shape=[1, 32])
-        INPUTcoeff = z_to_lambda_mapping(latents)
+        # INPUTcoeff = z_to_lambda_mapping(latents)
         INPUTcoeff_id = INPUTcoeff[:, :160]
         INPUTcoeff_w_noise = tf.concat([INPUTcoeff_id, tf.zeros([1, 64 + 27 + 3]), noise], axis=1)
         dlatent_out = Gs.components.mapping.get_output_for(INPUTcoeff_w_noise, None, is_training=False,
