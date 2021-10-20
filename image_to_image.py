@@ -141,9 +141,12 @@ def parse_args():
     desc = "Data Preprocess of DisentangledFaceGAN"
     parser = argparse.ArgumentParser(description=desc)
 
-    parser.add_argument('--image_path', type=str, default='/root/lib/DiscoFaceGAN/disco_input', help='Training image path.')
-    parser.add_argument('--lm_path', type=str, default='/root/lib/DiscoFaceGAN/disco_input', help='Deteced landmark path.')
-    parser.add_argument('--model', type=str, default=None, help='pkl file name of the generator. If None, use the default pre-trained model.')
+    parser.add_argument('-image_path', '--image_path', type=str, default='/root/lib/DiscoFaceGAN/inference/infer_02/disco_input', help='Training image path.')
+    parser.add_argument('-lm_path', '--lm_path', type=str, default='/root/lib/DiscoFaceGAN/inference/infer_02/disco_input', help='Deteced landmark path.')
+    parser.add_argument('-model', '--model', type=str, default=None, help='pkl file name of the generator. If None, use the default pre-trained model.')
+    parser.add_argument('-result_save_path', '--result_save_path', type=str, default='/root/lib/DiscoFaceGAN/inference/infer_02/result', help='result save path')
+    parser.add_argument('-align_save_path', '--align_save_path', type=str, default='/root/lib/DiscoFaceGAN/inference/infer_02/align', help='aligned images save path')
+    parser.add_argument('-idx_ref', '--idx_ref', type=int, default=None, help='id reference image')
 
     return parser.parse_args()
 
@@ -220,10 +223,10 @@ def main():
                     # savemat(os.path.join(save_path, 'coeff', file.replace('.png', '.mat')), {'coeff': coef})
 
             # save path for generated images
-            save_path = 'digit_man/render_images'
+            save_path = args.result_save_path
             if not os.path.exists(save_path):
                 os.makedirs(save_path)
-            aligned_save_path = 'digit_man/images_aligned'
+            aligned_save_path = args.align_save_path
             if not os.path.exists(aligned_save_path):
                 os.makedirs(aligned_save_path)
             resume_pkl = ''
@@ -260,11 +263,15 @@ def main():
 
             np.random.seed(1)
             n = len(coef_list)
-            coef_ref = coef_list[92]
+            if args.idx_ref is not None:
+                coef_ref = coef_list[args.idx_ref]
             noise_ = np.random.normal(size=[1, 32])
             for image_aligned, coef, file in zip(image_aligned_list, coef_list, image_name_list):
                 # lats1 = np.random.normal(size=[1,128+32+16+3])
-                coef_short = np.concatenate((coef_ref[:, :160], coef[:, 160:254]), axis=1)
+                if args.idx_ref is not None:
+                    coef_short = np.concatenate((coef_ref[:, :160], coef[:, 160:254]), axis=1)
+                else:
+                    coef_short = coef[:, :254]
 
                 fake = tflib.run(fake_images_out, {INPUTcoeff:coef_short,noise:noise_})
                 PIL.Image.fromarray(fake[0].astype(np.uint8), 'RGB').save(os.path.join(save_path, file))
