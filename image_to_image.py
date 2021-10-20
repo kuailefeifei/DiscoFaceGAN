@@ -240,7 +240,7 @@ def main():
                 # latents = tf.placeholder(tf.float32, name='latents', shape=[1,128+32+16+3])
                 noise = tf.placeholder(tf.float32, name='noise', shape=[1,32])
                 # INPUTcoeff = z_to_lambda_mapping(latents)
-                INPUTcoeff = tf.placeholder(tf.float32, name='coeff', shape=[1,258])
+                INPUTcoeff = tf.placeholder(tf.float32, name='coeff', shape=[1,254])
                 INPUTcoeff_w_noise = tf.concat([INPUTcoeff,noise],axis = 1)
 
                 # Generate images
