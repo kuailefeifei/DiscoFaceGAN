@@ -69,6 +69,7 @@ def main():
     main_path = '/root/lib/DiscoFaceGAN/inference/infer_02'
     name_1 = 'align.mp4'
     name_2 = 'disco.mp4'
+    output_path = os.path.join(main_path, 'compare.mp4')
     video_1 = os.path.join(main_path, name_1)
     video_2 = os.path.join(main_path, name_2)
     input_path_grid = [[video_1, video_2]]
