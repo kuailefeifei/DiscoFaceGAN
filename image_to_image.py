@@ -212,7 +212,7 @@ def main():
             # cv2.imwrite(os.path.join(save_path, 'img', file), rescale_img[:, :, ::-1])
             # savemat(os.path.join(save_path, 'coeff', file.replace('.png', '.mat')), {'coeff': coef})
 
-    coef = np.unsqueeze(coef, 0)
+    coef = np.expand_dims(coef, 0)
     # save path for generated images
     save_path = 'test_images'
     if not os.path.exists(save_path):
