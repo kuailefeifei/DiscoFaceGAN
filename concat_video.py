@@ -18,14 +18,7 @@ def concat_video(input_path_grid, output_path, add_tag=True):
     m = len(video_grid)
     n = len(video_grid[0])
     height = video_grid[0][0].height
-    width = video_grid[0][0].resampled_width
-    # height_2 = video_grid[0][1].height
-    # width_2 = video_grid[0][1].resampled_width
-    # print(height_1, width_1)
-    # print(height_2, width_2)
-    # print(video_grid[1][0].height, video_grid[1][0].resampled_width)
-    # print(video_grid[1][1].height, video_grid[1][1].resampled_width)
-    # print('cut line')
+    width = video_grid[0][0].width
 
     output_video = VideoWriter(
         output_path,
